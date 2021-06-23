@@ -15,6 +15,7 @@ export default class msalPlugin {
         }
         const exposed: MSALBasic = {
             data: msal.data,
+            auth: msal.auth,
             signIn() { msal.signIn(); },
             async signOut() { await msal.signOut(); },
             isAuthenticated() { return msal.isAuthenticated(); },
