@@ -1,5 +1,5 @@
 import msal from "msal";
-import conf from "msal/lib-commonjs/Configuration";
+import conf, { AuthOptions } from "msal/lib-commonjs/Configuration";
 import { AxiosRequestConfig } from "axios";
 
 export type AuthError = msal.AuthError;
@@ -74,7 +74,8 @@ export interface MSALBasic {
     isAuthenticated: () => boolean,
     acquireToken: (request: Request, retries: number) => Promise<AuthResponse | boolean>,
     msGraph: (endpoints:  GraphEndpoints, batchUrl: string | undefined) => Promise<object>,
-    saveCustomData: (key: string, data: any) => void
+    saveCustomData: (key: string, data: any) => void,
+    setAuth: (options: Auth) => void
 }
 
 export type CategorizedGraphRequests = { singleRequests: GraphDetailedObject[], batchRequests: { [id:string]: GraphDetailedObject[] } }

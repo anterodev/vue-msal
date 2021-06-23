@@ -29,7 +29,7 @@ export class MSAL implements MSALBasic {
         custom: {}
     };
     public callbackQueue: CallbackQueueObject[] = [];
-    private readonly auth: Auth = {
+    private auth: Auth = {
         clientId: '',
         authority: '',
         tenantId: 'common',
@@ -359,6 +359,20 @@ export class MSAL implements MSALBasic {
             customData = JSON.parse(customDataStr);
         }
         this.data.custom = customData;
+    }
+    setAuth(options: Auth) {
+        this.auth = Object.assign(this.auth, options);
+
+        this.lib = new UserAgentApplicationExtended({
+            auth: {
+                clientId: this.auth.clientId,
+                authority: this.auth.authority || `https://${this.auth.tenantName}/${this.auth.tenantId}`,
+                validateAuthority: this.auth.validateAuthority,
+                redirectUri: this.auth.redirectUri,
+                postLogoutRedirectUri: this.auth.postLogoutRedirectUri,
+                navigateToLoginRequestUrl: this.auth.navigateToLoginRequestUrl
+            }
+        });
     }
     // CALLBACKS
     private saveCallback(callbackPath: string, ...args: any[]) {
