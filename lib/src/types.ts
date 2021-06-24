@@ -58,7 +58,7 @@ export type DataObject = {
     idToken: string,
     user: object,
     graph: object,
-    custom: object
+    custom: {}
 }
 
 export type CallbackQueueObject = {

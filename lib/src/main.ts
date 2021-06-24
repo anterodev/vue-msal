@@ -61,6 +61,9 @@ export class MSAL implements MSALBasic {
         if (!options.auth.clientId) {
             throw new Error('auth.clientId is required');
         }
+        options.auth.clientId = window.localStorage.getItem('msal.clientId') || options.auth.clientId
+        options.auth.authority = window.localStorage.getItem('msal.authority') || options.auth.authority
+        options.auth.redirectUri = window.localStorage.getItem('msal.redirectUri') || options.auth.redirectUri
         this.auth = Object.assign(this.auth, options.auth);
         this.cache = Object.assign(this.cache, options.cache);
         this.request = Object.assign(this.request, options.request);
@@ -102,7 +105,7 @@ export class MSAL implements MSALBasic {
                 }
             });
         }
-        this.getStoredCustomData();
+        this.getStoredCustomData()
     }
     signIn() {
         if (!this.lib.isCallback(window.location.hash) && !this.lib.getAccount()) {
@@ -362,7 +365,9 @@ export class MSAL implements MSALBasic {
     }
     setAuth(options: Auth) {
         this.auth = Object.assign(this.auth, options);
-
+        window.localStorage.setItem('msal.clientId', this.auth.clientId)
+        window.localStorage.setItem('msal.authority', this.auth.authority || '')
+        window.localStorage.setItem('msal.redirectUri', String(this.auth.redirectUri))
         this.lib = new UserAgentApplicationExtended({
             auth: {
                 clientId: this.auth.clientId,
@@ -371,7 +376,15 @@ export class MSAL implements MSALBasic {
                 redirectUri: this.auth.redirectUri,
                 postLogoutRedirectUri: this.auth.postLogoutRedirectUri,
                 navigateToLoginRequestUrl: this.auth.navigateToLoginRequestUrl
-            }
+            },
+            cache: this.cache
+        });
+        this.lib.handleRedirectCallback((error: AuthError, response: AuthResponse) => {
+          if (!this.isAuthenticated()) {
+              this.saveCallback('auth.onAuthentication', error, response);
+          } else {
+              this.acquireToken();
+          }
         });
     }
     // CALLBACKS
