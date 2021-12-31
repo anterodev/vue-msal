@@ -128,7 +128,7 @@ export class MSAL implements MSALBasic {
             const response = await this.lib.acquireTokenSilent(request);
             this.handleTokenResponse(null, response);
             return response;
-        } catch (error) {
+        } catch (error: any) {
             // Upon acquireTokenSilent failure (due to consent or interaction or login required ONLY)
             // Call acquireTokenRedirect
             if (this.requiresInteraction(error.errorCode)) {
@@ -418,7 +418,7 @@ export class MSAL implements MSALBasic {
                         return cb.id === currentCb.id;
                     });
                     this.storeCallbackQueue();
-                } catch (e) {
+                } catch (e: any) {
                     console.warn(`Callback '${cb.id}' failed with error: `, e.message);
                 }
             }
